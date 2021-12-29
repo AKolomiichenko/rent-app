@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>Правила аренды</title>
+</head>
+<body class="d-flex flex-column vh-100">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Белый павлин</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link" href="/">Домашняя страница</a>
+              <a class="nav-link" aria-current="page" href="/costumes">Все костюмы</a>
+              <a class="nav-link active" href="/instructions">Правила аренды</a>
+              <% if (currentUser && currentUser.isAdmin) { %>
+                <a class="nav-link" href="/costumes/new">Добавить костюм</a>
+                <a class="nav-link" href="/styles">Стили костюмов</a>
+                <a class="nav-link" href="/types">Типы костюмов</a>
+                <% } %>
+            </div>
+            <div class="navbar-nav ms-auto">
+              <% if(!currentUser) {%>
+              <a class="nav-link" href="/login">Вход</a>
+              <a class="nav-link" href="/register">Регистрация</a>
+              <%} else {%>
+              <a class="nav-link" href="/logout">Выход</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <main class="container mt-3 mb-3">
+        <% if(success && success.length) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+              <%= success %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+            <% if(error && error.length) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <%= error %>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+    <h1 class="text-center">Правила аренды</h1>
+    <div class="container d-flex justify-content-center">
+        <span class="mb-3">Пожалуйста, внимательно ознакомьтесь с нижеперечисленными правилами. Это поможет нам избежать недопониманий и сэкономить время друг друга.</span>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title text-center fs-1">1</h5>
+              <p class="card-text text-center">Все костюмы и аксессуары, доступные на сайте, предоставляются в аренду на возмездной основе (если не оговорено иное).</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title text-center fs-1">2</h5>
+              <p class="card-text text-center">Аренда предоставляется на залоговой основе <br> (вы оставляете залог за костюм).</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">3</h5>
+                <p class="card-text text-center">Минимальный срок аренды составляет 1 сутки <br> (24 часа) с момента выдачи костюма. <br> Почасовая аренда не предусмотрена.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">4</h5>
+                <p class="card-text text-center">Чтобы взять костюм в аренду, необходимо связаться со мной письменно любым из предложенных способов:
+                    <ul>
+                        <li><a href="https://www.instagram.com/_white_peacock_cw_/">Instagram</a></li>
+                        <li><a href="https://vk.com/delfnat">Вконтакте</a></li>
+                        <li>Почта: whitepeacockcw@gmail.com</li>
+                    </ul>
+                  </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">5</h5>
+                <p class="card-text text-center">С вами будет заключен договор на аренду костюма, в котором будут прописаны следующие пункты: 
+                    <ul>
+                        <li>срок аренды;</li> 
+                        <li>стоимость аренды;</li> 
+                        <li>ответственность сторон.</li> 
+                    </ul>
+                        Договор является обязательным пунктом для аренды костюма, без него аренда невозможна.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">6</h5>
+                <p class="card-text text-center">В отдельных случаях может быть организована примерка костюма, однако в настоящий момент мастерская не располагает шоурумом, в связи с чем такая возможность сопряжена с рядом неудобств. Если вы не уверены, что костюм подойдет вам по размеру, вы можете прислать свои мерки и модель костюма, которая вас интересует, на один из указанных выше каналов связи и получить ответ на этот вопрос.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">7</h5>
+                <p class="card-text text-center">Будьте готовы ответить на ряд вопросов о цели аренды. Вам может быть отказано в аренде, примерке, а также аренде после примерки, в том числе - без объяснения причин.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">8</h5>
+                <p class="card-text text-center">Если у вас возникли вопросы, вы можете связаться со мной любым удобным для вас способом, контакты перечислены выше.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 mt-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center fs-1">9</h5>
+                <p class="card-text text-center">Пример запроса на аренду: <br>
+                    "Здравствуйте, меня зовут Кристина, я бы хотела взять платье "Черный аметист" и шляпу к нему для фотосессии в студии на 27.12.2021 г. Подскажите, свободно ли платье и могу ли я приехать на примерку 25.12 или 26.12? Также я бы хотела ознакомиться с договором на аренду заранее".
+                    <br> Какой запрос будет игнорироваться: <br>
+                    "Здравствуйте, меня зовут Олеся, и я бы хотела что-нибудь готическое размера М, подскажите, что у вас есть?"
+                    <br> Причина - все доступные к аренде костюмы представлены на сайте вместе с размерной таблицей. Пожалуйста, выбирайте интересующий вас костюм или части костюмов самостоятельно.</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="container d-flex justify-content-center">
+        <span class="mt-3 mb-3">Спасибо, что ознакомились с правилами! Буду рада ответить на ваши вопросы и увидеть вас в списке клиентов.</span>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</main>
+<footer class="footer bg-dark py-3 mt-auto">
+    <div class="container d-flex justify-content-center">
+        <span class="text-muted">&copy; Творческая мастерская "Белый павлин" 2022</span>
+    </div>
+</footer>
+</body>
+</html>

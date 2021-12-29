@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
+    <title>Просмотр</title>
+</head>
+<body class="d-flex flex-column vh-100">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Белый павлин</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link" href="/">Домашняя страница</a>
+              <a class="nav-link" href="/costumes">Все костюмы</a>
+              <a class="nav-link" href="/instructions">Правила аренды</a>
+              <% if (currentUser && currentUser.isAdmin) { %>
+              <a class="nav-link" href="/costumes/new">Добавить костюм</a>
+              <a class="nav-link" href="/styles">Стили костюмов</a>
+              <a class="nav-link" href="/types">Типы костюмов</a>
+              <% } %>
+            </div>
+            <div class="navbar-nav ms-auto">
+              <% if(!currentUser) {%>
+              <a class="nav-link" href="/login">Вход</a>
+              <a class="nav-link" href="/register">Регистрация</a>
+              <%} else {%>
+              <a class="nav-link" href="/logout">Выход</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </nav>
+    <main class="container mt-3">
+      <% if(success && success.length) { %>
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% } %>
+      <% if(error && error.length) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= error %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <div class="card mb-3" style="width: 28rem;">
+            <div id="costumeCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <% oneCostume.images.forEach((img, i) => { %>
+                  <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                    <img src="<%= img.url %>" class="d-block img-fluid" alt="">
+                  </div>
+                <% }) %>
+              </div>
+              <% if(oneCostume.images.length > 1) { %>
+                <button class="carousel-control-prev" type="button" data-bs-target="#costumeCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#costumeCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              <% } %>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title fs-5 badge bg-primary text-wrap"><%= oneCostume.title %> - <%= oneCostume.price %> руб.</h5>
+              <div class="accordion accordion" id="description">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Описание
+                    </button>
+                  </h2>
+                  <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#description">
+                    <div class="accordion-body">
+                      <%= oneCostume.description %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <% if (currentUser && oneCostume.author.equals(currentUser._id)) { %>
+                          <a href="/costumes/<%= oneCostume._id %>/edit" class="card-link btn btn-warning">Редактировать</a>
+                          <form class="d-inline" action="/costumes/<%= oneCostume._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger">Удалить костюм</button>
+                          </form>
+                          <% } %>
+                        <a href="/costumes" class="card-link btn btn-info">Все костюмы</a>
+            </div>
+        </div>
+      </div>
+        <div class="col-4">
+          <h3 class="text-center fs-3 badge bg-primary text-wrap">Где побывал этот костюм</h3>
+          <div id='map' style='width: 100%; height: 300px;'></div>
+          <% if(currentUser) { %>
+          <form action="/costumes/<%= oneCostume._id %>/reviews" method="POST" class="mb-3 validated-form" novalidate>
+            <div class="mb-3">
+              <label class="form-label" for="body">Ваш отзыв о костюме</label>
+              <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
+              <div class="invalid-feedback">
+                Добавьте комментарий
+            </div>
+            </div>
+            <button class="btn btn-success">Оставить отзыв</button>
+          </form>
+          <% } %>
+          <% for (let review of oneCostume.reviews) {%>
+            <div class="card mb-3 mt-3">
+              <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Автор: <%= review.author.username %></h6>
+                <p class="card-text">Отзыв: <%= review.body %></p>
+                <% if (currentUser && (review.author.equals(currentUser._id) || currentUser.isAdmin)) { %>
+                <form action="/costumes/<%= oneCostume._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                  <button class="btn btn-sm btn-danger">Удалить отзыв</button>
+                </form>
+                <% } %>
+              </div>
+            </div>
+          <%}%>
+        </div>
+  </div>
+    <script>
+      (function () {
+          'use strict'
+          const forms = document.querySelectorAll('.validated-form')
+          Array.from(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+        
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })()
+      </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script>
+    mapboxgl.accessToken = "<%- process.env.MAPBOX_TOKEN %>";
+    const costume = <%- JSON.stringify(oneCostume) %>;
+    const map = new mapboxgl.Map({
+      container: "map", 
+      style: "mapbox://styles/mapbox/streets-v11", 
+      center: costume.geometry[0].coordinates, 
+      zoom: 3
+    });
+    costume.geometry.forEach(item => {
+      new mapboxgl.Marker()
+      .setLngLat(item.coordinates)
+      .addTo(map);
+    });
+    mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+    map.addControl(new MapboxLanguage());
+    map.addControl(new mapboxgl.NavigationControl());
+  </script>
+  </main>
+    <footer class="footer bg-dark py-3 mt-auto">
+        <div class="container d-flex justify-content-center">
+            <span class="text-muted">&copy; Творческая мастерская "Белый павлин" 2022</span>
+        </div>
+    </footer>
+</body>
+</html>
